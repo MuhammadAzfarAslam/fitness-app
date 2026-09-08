@@ -1,0 +1,6 @@
+project_id = "forma"
+[functions.coach]
+verify_jwt = false
+[functions.food-analysis]
+verify_jwt = false
+# Functions verify bearer tokens explicitly with auth.getUser().

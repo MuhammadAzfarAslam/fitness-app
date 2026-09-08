@@ -1,0 +1,124 @@
+export type Page =
+  'Home' | 'Workout' | 'Nutrition' | 'Progress' | 'Trainer' | 'Library' | 'Settings';
+export type Profile = {
+  name: string;
+  age: number;
+  sex: string;
+  height: number;
+  weight: number;
+  targetWeight: number;
+  goal: string;
+  customGoal: string;
+  secondaryGoals: string;
+  level: string;
+  experience: string;
+  days: number[];
+  duration: number;
+  exerciseCount: number;
+  location: string;
+  equipment: string[];
+  injuries: string;
+  limitations: string;
+  excluded: string[];
+  preferences: string;
+  activity: number;
+  sleep: number;
+  onboarded: boolean;
+};
+export type Exercise = {
+  id: string;
+  name: string;
+  muscle: string;
+  secondary: string;
+  equipment: string;
+  pattern: string;
+  difficulty: string;
+  compound: boolean;
+  setup: string;
+  steps: string[];
+  cues: string[];
+  mistakes: string;
+  alternatives: string[];
+  unit?: 'seconds' | 'minutes';
+  mediaUrl?: string;
+};
+export type PlanExercise = {
+  exerciseId: string;
+  sets: number;
+  reps: number;
+  rest: number;
+  weight: number;
+  rpe: number;
+  reason: string;
+};
+export type Plan = {
+  name: string;
+  subtitle: string;
+  exercises: PlanExercise[];
+  duration: number;
+  lighter: boolean;
+};
+export type SetLog = { weight: number; reps: number; rpe: number; done: boolean };
+export type ExerciseLog = { exerciseId: string; sets: SetLog[]; notes: string };
+export type WorkoutLog = {
+  id: string;
+  date: string;
+  name: string;
+  duration: number;
+  exercises: ExerciseLog[];
+  notes: string;
+};
+export type ActiveWorkout = {
+  id: string;
+  started: string;
+  plan: Plan;
+  logs: ExerciseLog[];
+  index: number;
+};
+export type Meal = {
+  id: string;
+  date: string;
+  category: string;
+  name: string;
+  portion: string;
+  quantity: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
+export type Measurement = {
+  id: string;
+  date: string;
+  weight: number;
+  waist?: number;
+  chest?: number;
+  arms?: number;
+  thighs?: number;
+  hips?: number;
+};
+export type Recovery = {
+  date: string;
+  sleep: number;
+  fatigue: number;
+  soreness: number;
+  motivation: number;
+  stress: number;
+};
+export type Message = { role: 'user' | 'assistant'; content: string };
+export type Photo = { id: string; date: string; path: string; caption: string };
+export type AppState = {
+  version: 1;
+  profile: Profile;
+  workouts: WorkoutLog[];
+  meals: Meal[];
+  measurements: Measurement[];
+  recovery: Recovery[];
+  photos: Photo[];
+  messages: Message[];
+  active: ActiveWorkout | null;
+  water: { date: string; glasses: number };
+  theme: 'light' | 'dark' | 'system';
+  units: 'kg' | 'lb';
+  reminder: boolean;
+};
