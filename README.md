@@ -104,7 +104,10 @@ Live Supabase and AI calls require your own project and credentials. They are im
 
 1. Create one GitHub repository and push this entire project to its `main` branch.
 2. In Settings → Pages, set the build source to **GitHub Actions**.
-3. If using Supabase, add repository Actions **variables** `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. Leave them unset for demo mode.
+3. If using Supabase, go to **Settings → Secrets and variables → Actions → Secrets → New repository secret** and add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (use the publishable key for this second value). Secrets take precedence over existing Actions variables, which remain supported. Leave both unset for demo mode. Re-run the workflow after changing these build-time values.
+
+   `.env.local` is ignored by Git and is only for local development; restart Vite after editing it. GitHub Actions secrets keep values out of repository files and mask them in build logs, but Vite embeds these two browser values in the deployed JavaScript. They are **not hidden from site visitors**. Never put a service-role/secret key or database password in either value. Private data requires the included Supabase RLS migration and authentication. Store `OPENAI_API_KEY` only in Supabase Edge Function secrets.
+
 4. The included workflow installs from the lockfile, runs tests/lint/build, and deploys `dist`.
 5. The workflow sets the base path to `/<repository-name>/`. For a custom domain or `username.github.io` root repository, change `VITE_BASE_PATH` in the workflow to `/`.
 
@@ -139,3 +142,7 @@ Apply the migration and verify cross-account isolation with two test accounts. T
 ### Optional browser agent tools
 
 When `document.modelContext` is supported, Forma exposes `get_training_overview` (read-only) and `open_fitness_section` (navigation only). Unsupported browsers work normally. A mocked registry test covers the contract and validation; no compatible live WebMCP browser context was available for end-to-end verification.
+
+## Visual exercise instructions
+
+Every exercise guide includes an original SVG movement demonstration with three selectable stages, play/pause, slower playback, and stage-specific coaching cues. Motion starts only on request and respects reduced-motion preferences. The diagrams are bundled for offline use; no third-party media requests are needed. Pose definitions live in `src/data/movementVisuals.ts` and rendering/controls in `src/components/MovementDemo.tsx`. These are simplified instructional positions, not motion capture or professional form assessment.

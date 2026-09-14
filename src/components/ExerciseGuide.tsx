@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { BookOpen, Search, Dumbbell, ArrowUpRight } from 'lucide-react';
 import { exercises, exerciseById } from '../data/exercises';
 import { Modal, Empty } from './UI';
+import MovementDemo from './MovementDemo';
 export function ExerciseGuide({ id, onClose }: { id: string; onClose: () => void }) {
   const [current, setCurrent] = useState(id);
   const e = exerciseById(current);
   return (
     <Modal title={e.name} onClose={onClose}>
+      <MovementDemo key={e.id} exercise={e} />
       <div className="guide-tags">
         <span>{e.muscle}</span>
         <span>{e.equipment}</span>

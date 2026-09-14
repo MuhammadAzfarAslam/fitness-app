@@ -215,7 +215,7 @@ export default function Workout() {
             <div className="coach-note">{plan.exercises[active.index].reason}</div>
             <div className="spread action-row">
               <button className="text-button" onClick={() => setGuide(current.id)}>
-                Open form guide
+                View movement & form
                 <ArrowRight size={15} />
               </button>
               <button className="text-button" onClick={() => setReplace(active.index)}>
