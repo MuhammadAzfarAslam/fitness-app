@@ -61,13 +61,16 @@ export function generatePlan(
   const index = Math.max(0, profile.days.indexOf(day));
   const cardio = /cardio|endurance/i.test(profile.goal);
   const lower = split && index % 2 === 1;
-  const name = cardio
-    ? 'Build your engine'
-    : split
-      ? lower
-        ? 'Lower body · Build'
-        : 'Upper body · Build'
-      : 'Full body · Foundation';
+  const custom = profile.days.includes(day) ? profile.weeklyPlan?.[day] : undefined;
+  const name = custom
+    ? custom.name
+    : cardio
+      ? 'Build your engine'
+      : split
+        ? lower
+          ? 'Lower body · Build'
+          : 'Upper body · Build'
+        : 'Full body · Foundation';
   const strength = /strength|power/i.test(profile.goal);
   const reps = strength ? 6 : /endurance/i.test(profile.goal) ? 15 : 10;
   const patterns = cardio
@@ -85,15 +88,15 @@ export function generatePlan(
       (!profile.preferences.toLowerCase().includes('no barbell') || e.equipment !== 'Barbell'),
   );
   const selected: PlanExercise[] = [];
-  const max = Math.min(
-    profile.exerciseCount,
-    Math.max(2, Math.floor((duration - 5) / 6)),
-    patterns.length,
-  );
-  for (const pattern of patterns) {
+  const max = custom
+    ? custom.exerciseIds.length
+    : Math.min(profile.exerciseCount, Math.max(2, Math.floor((duration - 5) / 6)), patterns.length);
+  for (const pattern of custom ? custom.exerciseIds : patterns) {
     if (selected.length >= max) break;
     const candidates = allowed.filter(
-      (e) => e.pattern === pattern && !selected.some((s) => s.exerciseId === e.id),
+      (e) =>
+        (custom ? e.id === pattern : e.pattern === pattern) &&
+        !selected.some((s) => s.exerciseId === e.id),
     );
     const e = candidates.sort((a, b) => {
       const prefer = (x: typeof a) =>

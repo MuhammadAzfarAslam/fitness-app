@@ -13,6 +13,7 @@ export type Profile = {
   level: string;
   experience: string;
   days: number[];
+  weeklyPlan?: Record<number, { name: string; exerciseIds: string[] }>;
   duration: number;
   exerciseCount: number;
   location: string;

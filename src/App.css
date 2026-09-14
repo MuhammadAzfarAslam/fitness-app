@@ -3698,3 +3698,75 @@ details p {
 .technique-panel > .movement-demo:first-child {
   margin-top: 0;
 }
+.weekly-edit-button {
+  margin-bottom: 16px;
+}
+.weekly-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+.weekly-days button {
+  padding: 12px 3px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+}
+.weekly-days button[aria-pressed='true'] {
+  background: #dff1bb;
+  color: #243c32;
+  border-color: #83a449;
+}
+.weekly-days small {
+  display: block;
+  font-size: 9px;
+  margin-top: 7px;
+}
+.weekly-exercises {
+  list-style: none;
+  padding: 0;
+}
+.weekly-exercises li,
+.weekly-catalog button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.weekly-exercises strong,
+.weekly-catalog strong {
+  font-size: 13px;
+}
+.weekly-exercises small,
+.weekly-catalog small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.weekly-row-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 3px;
+}
+.weekly-row-actions button {
+  width: 30px;
+  height: 38px;
+}
+.weekly-catalog {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+.weekly-catalog button {
+  width: 100%;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+}

@@ -19,10 +19,12 @@ import { generatePlan, today, uid, volume } from '../lib/engine';
 import { exercises, exerciseById } from '../data/exercises';
 import { Modal, Empty, Meter, SectionTitle } from './UI';
 import { ExerciseGuide } from './ExerciseGuide';
+import WeeklyPlanEditor from './WeeklyPlanEditor';
 import type { ActiveWorkout, Plan, WorkoutLog } from '../lib/types';
 export default function Workout() {
   const { state, setState, navigate, notify } = useApp();
   const [guide, setGuide] = useState<string | null>(null);
+  const [weeklyEditor, setWeeklyEditor] = useState(false);
   const [adjust, setAdjust] = useState(false);
   const [duration, setDuration] = useState(state.profile.duration);
   const [lighter, setLighter] = useState(false);
@@ -351,6 +353,9 @@ export default function Workout() {
         </div>
       ) : (
         <>
+          <button className="outline weekly-edit-button" onClick={() => setWeeklyEditor(true)}>
+            <SlidersHorizontal size={16} /> Edit weekly plan
+          </button>
           <div className="schedule-strip">
             {[1, 2, 3, 4, 5, 6, 0].map((d) => {
               const date = new Date();
@@ -417,9 +422,11 @@ export default function Workout() {
             </div>
             <div className="coach-note">
               <strong>Why this session?</strong>{' '}
-              {state.profile.days.length >= 4
-                ? 'Upper and lower sessions distribute your work across the week.'
-                : 'Full-body sessions cover the main movement patterns with recovery between training days.'}{' '}
+              {state.profile.weeklyPlan?.[day]
+                ? 'You chose these exercises and their order in your weekly plan.'
+                : state.profile.days.length >= 4
+                  ? 'Upper and lower sessions distribute your work across the week.'
+                  : 'Full-body sessions cover the main movement patterns with recovery between training days.'}{' '}
               {plan.lighter
                 ? 'Your volume is reduced today to support recovery.'
                 : `Your ${state.profile.duration}-minute preference and ${state.profile.level.toLowerCase()} experience guide the session size.`}
@@ -544,6 +551,7 @@ export default function Workout() {
           Start rest timer
         </button>
       )}
+      {weeklyEditor && <WeeklyPlanEditor onClose={() => setWeeklyEditor(false)} />}
       {guide && <ExerciseGuide id={guide} onClose={() => setGuide(null)} />}{' '}
       {adjust && (
         <Modal title="Make today work for you" onClose={() => setAdjust(false)}>

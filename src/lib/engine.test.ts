@@ -118,3 +118,23 @@ describe('nutrition and safety', () => {
     }
   });
 });
+
+it('uses a custom Monday leg session in the selected order without trimming it', () => {
+  const p = {
+    ...profile,
+    days: [1, 3, 5],
+    weeklyPlan: { 1: { name: 'Leg day', exerciseIds: ['body-squat', 'bridge', 'lunge', 'calf'] } },
+  };
+  const plan = generatePlan(p, [], { day: 1, duration: 20 });
+  expect(plan.name).toBe('Leg day');
+  expect(plan.exercises.map((e) => e.exerciseId)).toEqual([
+    'body-squat',
+    'bridge',
+    'lunge',
+    'calf',
+  ]);
+  expect(generatePlan(p, [], { day: 3 }).name).toBe('Full body · Foundation');
+  expect(
+    generatePlan({ ...p, excluded: ['lunge'] }, [], { day: 1 }).exercises.map((e) => e.exerciseId),
+  ).not.toContain('lunge');
+});

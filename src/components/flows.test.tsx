@@ -143,3 +143,38 @@ describe('core demo journeys', () => {
     expect(onClose).toHaveBeenCalled();
   });
 });
+
+it('saves a Monday leg plan, restores it after reload, and leaves cancellation unchanged', async () => {
+  const user = userEvent.setup();
+  const view = render(
+    <Provider>
+      <Workout />
+    </Provider>,
+  );
+  await user.click(screen.getByRole('button', { name: 'Edit weekly plan' }));
+  for (const button of screen.getAllByRole('button', { name: /^Remove / }))
+    await user.click(button);
+  await user.clear(screen.getByLabelText('Session name'));
+  await user.type(screen.getByLabelText('Session name'), 'Leg day');
+  await user.click(screen.getByRole('button', { name: 'Add Bodyweight squat' }));
+  await user.click(screen.getByRole('button', { name: 'Add Glute bridge' }));
+  await user.click(screen.getByRole('button', { name: 'Move Glute bridge up' }));
+  await user.click(screen.getByRole('button', { name: 'Save weekly plan' }));
+  await waitFor(() =>
+    expect(saved().profile.weeklyPlan[1].exerciseIds).toEqual(['bridge', 'body-squat']),
+  );
+  view.unmount();
+  render(
+    <Provider>
+      <Workout />
+    </Provider>,
+  );
+  await user.click(screen.getByRole('button', { name: /^MON/ }));
+  expect(screen.getByRole('heading', { name: 'Leg day' })).toBeDefined();
+  await user.click(screen.getByRole('button', { name: 'Edit weekly plan' }));
+  await user.clear(screen.getByLabelText('Session name'));
+  await user.click(screen.getByRole('button', { name: 'Save weekly plan' }));
+  expect(screen.getByRole('alert').textContent).toContain('needs a session name');
+  await user.click(screen.getByRole('button', { name: 'Cancel' }));
+  expect(saved().profile.weeklyPlan[1].name).toBe('Leg day');
+});
