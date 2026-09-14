@@ -5,6 +5,7 @@ import { exercises, exerciseById } from '../data/exercises';
 import { generatePlan } from '../lib/engine';
 import type { Profile } from '../lib/types';
 import { Modal } from './UI';
+import { suggestExercises, trainingFocuses, type TrainingFocus } from '../lib/suggestions';
 const week = [1, 2, 3, 4, 5, 6, 0];
 const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
@@ -13,6 +14,8 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
   const [day, setDay] = useState(1);
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
+  const [focus, setFocus] = useState<TrainingFocus>('Legs');
+  const [proposal, setProposal] = useState<ReturnType<typeof suggestExercises> | null>(null);
   const training = draft.days.includes(day);
   const custom = draft.weeklyPlan?.[day];
   const generated = generatePlan({ ...draft, weeklyPlan: undefined }, state.workouts, { day });
@@ -78,6 +81,7 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
             aria-pressed={day === d}
             onClick={() => {
               setDay(d);
+              setProposal(null);
               setSearch('');
               setError('');
             }}
@@ -104,6 +108,64 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
       </label>
       {training ? (
         <>
+          <section className="suggest-plan" aria-label="Forma exercise suggestions">
+            <h3>Forma suggest</h3>
+            <p>
+              Choose what you want to train on {names[day]}. Forma will suggest{' '}
+              {draft.exerciseCount} exercises using your profile.
+            </p>
+            <label className="field">
+              Training focus
+              <select
+                value={focus}
+                onChange={(e) => {
+                  setFocus(e.target.value as TrainingFocus);
+                  setProposal(null);
+                }}
+              >
+                {trainingFocuses.map((f) => (
+                  <option key={f}>{f}</option>
+                ))}
+              </select>
+            </label>
+            <button
+              className="outline"
+              type="button"
+              onClick={() => setProposal(suggestExercises(draft, focus))}
+            >
+              Suggest exercises
+            </button>
+            {proposal && (
+              <div aria-live="polite">
+                <p>{proposal.explanation}</p>
+                <ol>
+                  {proposal.exerciseIds.map((id) => (
+                    <li key={id}>{exerciseById(id).name}</li>
+                  ))}
+                </ol>
+                {proposal.warning && <p className="notice">{proposal.warning}</p>}
+                <p className="footnote">
+                  Sets and reps follow your goal; load suggestions use workout history. Height and
+                  body weight alone do not determine a suitable lifting weight. This suggestion
+                  cannot assess injuries.
+                </p>
+                <button
+                  className="primary"
+                  type="button"
+                  disabled={!proposal.exerciseIds.length}
+                  onClick={() => {
+                    update(proposal.exerciseIds, `${focus} day`);
+                    setProposal(null);
+                  }}
+                >
+                  Use suggestions for {names[day]}
+                </button>
+                <p className="footnote">
+                  Replaces this day’s draft list. Review it below, then Save weekly plan to keep it.
+                </p>
+              </div>
+            )}
+          </section>
           <label className="field">
             Session name
             <input

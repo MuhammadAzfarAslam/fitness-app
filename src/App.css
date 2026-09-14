@@ -3770,3 +3770,21 @@ details p {
   border-left: 0;
   border-right: 0;
 }
+.suggest-plan {
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  margin: 16px 0 24px;
+}
+.suggest-plan h3 {
+  margin: 0 0 8px;
+}
+.suggest-plan p,
+.suggest-plan li {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.suggest-plan li {
+  margin-bottom: 6px;
+}

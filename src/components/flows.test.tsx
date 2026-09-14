@@ -178,3 +178,24 @@ it('saves a Monday leg plan, restores it after reload, and leaves cancellation u
   await user.click(screen.getByRole('button', { name: 'Cancel' }));
   expect(saved().profile.weeklyPlan[1].name).toBe('Leg day');
 });
+
+it('previews Forma leg suggestions and applies them only when requested', async () => {
+  const initial = seedState();
+  initial.profile.exerciseCount = 5;
+  localStorage.setItem('forma.demo.v1', JSON.stringify(initial));
+  const user = userEvent.setup();
+  render(
+    <Provider>
+      <Workout />
+    </Provider>,
+  );
+  await user.click(screen.getByRole('button', { name: 'Edit weekly plan' }));
+  await user.selectOptions(screen.getByLabelText('Training focus'), 'Legs');
+  await user.click(screen.getByRole('button', { name: 'Suggest exercises' }));
+  expect(saved().profile.weeklyPlan).toBeUndefined();
+  await user.click(screen.getByRole('button', { name: 'Use suggestions for Monday' }));
+  expect((screen.getByLabelText('Session name') as HTMLInputElement).value).toBe('Legs day');
+  expect(saved().profile.weeklyPlan).toBeUndefined();
+  await user.click(screen.getByRole('button', { name: 'Save weekly plan' }));
+  await waitFor(() => expect(saved().profile.weeklyPlan[1].exerciseIds).toHaveLength(5));
+});
