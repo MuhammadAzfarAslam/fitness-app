@@ -146,3 +146,13 @@ When `document.modelContext` is supported, Forma exposes `get_training_overview`
 ## Visual exercise instructions
 
 Every exercise guide includes an original SVG movement demonstration with three selectable stages, play/pause, slower playback, and stage-specific coaching cues. Motion starts only on request and respects reduced-motion preferences. The diagrams are bundled for offline use; no third-party media requests are needed. Pose definitions live in `src/data/movementVisuals.ts` and rendering/controls in `src/components/MovementDemo.tsx`. These are simplified instructional positions, not motion capture or professional form assessment.
+
+### Detailed technique studio
+
+Exercise guides open with grip and setup instructions, followed by selectable Angles, Movement, and Self-check views. `src/data/technique.ts` contains exercise-specific contact points, alignment, range, and safe-exit guidance for all 38 exercises. Incline press includes an original top-down grip comparison, low-incline bench diagram, upper-arm angle reference, and wrist alignment comparison. The ACE link supports grip/wrist technique; its bench-angle variation differs from the low-incline version used here. Diagrams and checklists teach technique but do not observe or certify a user’s form.
+
+### Authentication URLs and missing database tables
+
+In Supabase → Authentication → URL Configuration, set Site URL to `https://muhammadazfaraslam.github.io/fitness-app/` and allow that exact redirect URL. Signup and password-reset requests use this production destination even when made from localhost. `VITE_AUTH_REDIRECT_URL` can override it for another deployment. Old emails retain their old URLs; request a fresh email after changing settings.
+
+A `PGRST205` / missing `public.user_data` error means the initial SQL migration has not been applied to the connected project (or the API schema cache has not refreshed). Run `supabase/migrations/202609080001_initial.sql` once in that project’s SQL Editor. It creates the data tables, owner-only policies, private photo bucket, and account/AI functions. Then reload Forma to retry loading account data. Never disable RLS to work around this error.

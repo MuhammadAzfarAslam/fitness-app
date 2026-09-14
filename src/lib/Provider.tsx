@@ -44,7 +44,9 @@ export function Provider({ children }: { children: ReactNode }) {
               if (generation.current === gen) {
                 setState(seedState(true));
                 setSync(
-                  `Cloud unavailable: ${err.message}. Sign out and retry to protect existing data.`,
+                  err.code === 'PGRST205'
+                    ? 'Cloud unavailable: Account storage has not been set up yet. Reload after database setup is complete. Cloud saving is paused to protect existing data.'
+                    : `Cloud unavailable: ${err.message}. Reload or sign in again to retry. Cloud saving is paused to protect existing data.`,
                 );
               }
             })

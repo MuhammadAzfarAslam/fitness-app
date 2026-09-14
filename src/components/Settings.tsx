@@ -1,3 +1,4 @@
+import { authRedirectUrl } from '../lib/config';
 import { useState } from 'react';
 import {
   ArrowRight,
@@ -428,7 +429,7 @@ export function Auth({ onClose }: { onClose: () => void }) {
     try {
       if (mode === 'reset') {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin + import.meta.env.BASE_URL,
+          redirectTo: authRedirectUrl,
         });
         if (error) throw error;
         notify('If an account exists, a reset link is on its way.');
@@ -442,7 +443,7 @@ export function Auth({ onClose }: { onClose: () => void }) {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + import.meta.env.BASE_URL },
+          options: { emailRedirectTo: authRedirectUrl },
         });
         if (error) throw error;
         notify(

@@ -1,3 +1,5 @@
+begin;
+
 -- One private, versioned aggregate per user keeps the solo-developer API small.
 -- Structured JSON contains profile/goals, programs/active session, exercise/set logs,
 -- nutrition, measurements, recovery, photos, and preferences. Exercise catalog is versioned in source.
@@ -56,3 +58,6 @@ end;
 $$;
 revoke all on function public.consume_ai_quota() from public;
 grant execute on function public.consume_ai_quota() to authenticated;
+
+notify pgrst, 'reload schema';
+commit;

@@ -16,7 +16,7 @@ function useReducedMotion() {
   return reduced;
 }
 
-function Figure({
+export function Figure({
   pose,
   ghost = false,
   calf = false,
