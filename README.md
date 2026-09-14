@@ -104,7 +104,7 @@ Live Supabase and AI calls require your own project and credentials. They are im
 
 1. Create one GitHub repository and push this entire project to its `main` branch.
 2. In Settings → Pages, set the build source to **GitHub Actions**.
-3. If using Supabase, go to **Settings → Secrets and variables → Actions → Secrets → New repository secret** and add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (use the publishable key for this second value). Secrets take precedence over existing Actions variables, which remain supported. Leave both unset for demo mode. Re-run the workflow after changing these build-time values.
+3. If using Supabase, go to **Settings → Secrets and variables → Actions → Secrets → New repository secret** and add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (use the publishable key for this second value). The build job also uses the `github-pages` environment, so you can instead add the same two secrets under **Settings → Environments → github-pages → Environment secrets**. Environment secrets take precedence over repository secrets; Actions variables remain supported as a fallback. Leave both unset for demo mode. Re-run the workflow after changing these build-time values.
 
    `.env.local` is ignored by Git and is only for local development; restart Vite after editing it. GitHub Actions secrets keep values out of repository files and mask them in build logs, but Vite embeds these two browser values in the deployed JavaScript. They are **not hidden from site visitors**. Never put a service-role/secret key or database password in either value. Private data requires the included Supabase RLS migration and authentication. Store `OPENAI_API_KEY` only in Supabase Edge Function secrets.
 
