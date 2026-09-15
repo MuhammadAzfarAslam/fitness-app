@@ -1,3 +1,6 @@
+import ReadinessCheck from './ReadinessCheck';
+import WeeklyReview from './WeeklyReview';
+import { easierPlan } from '../lib/review';
 import { useEffect, useState } from 'react';
 import {
   ArrowRight,
@@ -23,6 +26,7 @@ import WeeklyPlanEditor from './WeeklyPlanEditor';
 import type { ActiveWorkout, Plan, WorkoutLog } from '../lib/types';
 export default function Workout() {
   const { state, setState, navigate, notify } = useApp();
+  const [readinessOpen, setReadinessOpen] = useState(false);
   const [guide, setGuide] = useState<string | null>(null);
   const [weeklyEditor, setWeeklyEditor] = useState(false);
   const [adjust, setAdjust] = useState(false);
@@ -40,14 +44,11 @@ export default function Workout() {
   const [running, setRunning] = useState(false);
   const [timerBase, setTimerBase] = useState(90);
   const [deadline, setDeadline] = useState(0);
-  const recovery = state.recovery.at(-1);
-  const suggestedEasy =
-    !!recovery && recovery.date === today() && (recovery.fatigue >= 4 || recovery.sleep < 6);
   const plan =
     state.active?.plan ??
     generatePlan(state.profile, state.workouts, {
       duration,
-      lighter: lighter || suggestedEasy,
+      lighter,
       day,
     });
   const active = state.active;
@@ -470,12 +471,13 @@ export default function Workout() {
             </div>
             <div className="plan-bottom">
               <p>Finish with 3–5 minutes of easy movement and comfortable stretching.</p>
-              <button className="primary" onClick={() => start(plan)}>
+              <button className="primary" onClick={() => setReadinessOpen(true)}>
                 Start workout
                 <ArrowRight size={18} />
               </button>
             </div>
           </div>
+          <WeeklyReview />
           <div className="split-cards">
             <button className="card link-card" onClick={() => navigate('Library')}>
               <Dumbbell size={24} />
@@ -550,6 +552,12 @@ export default function Workout() {
           <Clock size={16} />
           Start rest timer
         </button>
+      )}
+      {readinessOpen && (
+        <ReadinessCheck
+          onClose={() => setReadinessOpen(false)}
+          onStart={(easy) => start(easy && !plan.lighter ? easierPlan(plan) : plan)}
+        />
       )}
       {weeklyEditor && <WeeklyPlanEditor onClose={() => setWeeklyEditor(false)} />}
       {guide && <ExerciseGuide id={guide} onClose={() => setGuide(null)} />}{' '}

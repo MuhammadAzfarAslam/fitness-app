@@ -1,3 +1,4 @@
+import ReadinessCheck from './components/ReadinessCheck';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import {
   Activity,
@@ -17,8 +18,6 @@ import { Provider } from './lib/Provider';
 import { useApp } from './lib/context';
 import Home from './components/Home';
 import Settings, { ProfileForm } from './components/Settings';
-import { Modal } from './components/UI';
-import { today } from './lib/engine';
 import './App.css';
 import { useFitnessTools } from './lib/webmcp';
 const Workout = lazy(() => import('./components/Workout'));
@@ -35,17 +34,10 @@ const nav = [
 ] as const;
 function Shell() {
   useFitnessTools();
-  const { state, setState, page, navigate, userId, loading, sync, notify } = useApp();
+  const { state, page, navigate, userId, loading, sync } = useApp();
   const [offline, setOffline] = useState(!navigator.onLine);
   const [checkin, setCheckin] = useState(false);
   const [profile, setProfile] = useState(false);
-  const [recovery, setRecovery] = useState({
-    sleep: state.profile.sleep,
-    fatigue: 2,
-    soreness: 2,
-    motivation: 4,
-    stress: 2,
-  });
   const initials = state.profile.name
     .split(' ')
     .map((n) => n[0])
@@ -251,60 +243,7 @@ function Shell() {
         ))}
       </nav>
       {profile && <ProfileForm onClose={() => setProfile(false)} />}{' '}
-      {checkin && (
-        <Modal title="How are you feeling today?" onClose={() => setCheckin(false)}>
-          <p className="muted">A quick check-in helps you choose the right effort for today.</p>
-          <label className="field">
-            Sleep last night (hours)
-            <input
-              type="number"
-              min="0"
-              max="14"
-              step="0.5"
-              value={recovery.sleep}
-              onChange={(e) =>
-                setRecovery({
-                  ...recovery,
-                  sleep: Math.min(14, Math.max(0, Number(e.target.value))),
-                })
-              }
-            />
-          </label>
-          {(['fatigue', 'soreness', 'motivation', 'stress'] as const).map((k) => (
-            <label className="field" key={k}>
-              {k[0].toUpperCase() + k.slice(1)} · {recovery[k]} / 5
-              <input
-                type="range"
-                min="1"
-                max="5"
-                value={recovery[k]}
-                onChange={(e) => setRecovery({ ...recovery, [k]: Number(e.target.value) })}
-              />
-              <span className="range-labels">
-                <span>Low</span>
-                <span>High</span>
-              </span>
-            </label>
-          ))}
-          <button
-            className="primary full"
-            onClick={() => {
-              setState((s) => ({
-                ...s,
-                recovery: [
-                  ...s.recovery.filter((r) => r.date !== today()),
-                  { ...recovery, date: today() },
-                ],
-              }));
-              setCheckin(false);
-              notify('Recovery check-in saved. Your next session will consider your energy.');
-            }}
-          >
-            Save check-in
-          </button>
-          <p className="footnote">Recovery scores guide effort, not medical diagnoses.</p>
-        </Modal>
-      )}
+      {checkin && <ReadinessCheck onClose={() => setCheckin(false)} />}
     </div>
   );
 }

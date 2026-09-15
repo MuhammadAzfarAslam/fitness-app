@@ -1,3 +1,4 @@
+import { weeklyReview } from './review';
 import { createClient } from '@supabase/supabase-js';
 import type { AppState } from './types';
 import { seedState } from '../data/seed';
@@ -42,7 +43,13 @@ export async function requestCoach(message: string, state: AppState) {
   const { data, error } = await supabase.functions.invoke('coach', {
     body: {
       message,
-      profile: state.profile,
+      profile: {
+        ...state.profile,
+        coachingReview: weeklyReview(state),
+        recentConversation: state.messages
+          .slice(-6)
+          .map((m) => ({ ...m, content: m.content.slice(0, 2000) })),
+      },
       workouts: state.workouts.slice(-5),
       recovery: state.recovery.slice(-3),
     },

@@ -99,6 +99,7 @@ export type Measurement = {
   hips?: number;
 };
 export type Recovery = {
+  pain?: 'none' | 'movement' | 'urgent';
   date: string;
   sleep: number;
   fatigue: number;

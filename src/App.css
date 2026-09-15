@@ -3788,3 +3788,34 @@ details p {
 .suggest-plan li {
   margin-bottom: 6px;
 }
+.weekly-review {
+  margin: 22px 0;
+  padding: 22px;
+}
+.weekly-review h2 {
+  margin: 8px 0;
+  font-size: 21px;
+}
+.weekly-review p,
+.weekly-review li {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.review-stats {
+  display: flex;
+  gap: 20px;
+  margin: 18px 0;
+}
+.review-stats span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.review-stats strong {
+  display: block;
+  font-size: 24px;
+  color: var(--text);
+}
+.weekly-review summary {
+  cursor: pointer;
+  font-size: 13px;
+}

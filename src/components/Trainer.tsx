@@ -1,3 +1,5 @@
+import WeeklyReview from './WeeklyReview';
+import { reviewText } from '../lib/review';
 import { useState, useEffect, useRef } from 'react';
 import { ArrowUp, Dumbbell, Leaf, Moon, Sparkles, Zap } from 'lucide-react';
 import { useApp } from '../lib/context';
@@ -19,11 +21,23 @@ export default function Trainer() {
     setBusy(true);
     let reply = '';
     try {
-      reply = ai && userId ? await requestCoach(text, state) : coachReply(text, state);
+      reply =
+        ai && userId
+          ? await requestCoach(text, state)
+          : /review|weekly|schedule|plan balance/i.test(text) &&
+              !/pain|injur|hurt|breath|faint|dizz/i.test(text)
+            ? reviewText(state)
+            : /review|weekly|schedule|balance/i.test(text) &&
+                !/pain|injur|hurt|breath|faint|dizz/i.test(text)
+              ? reviewText(state)
+              : coachReply(text, state);
     } catch {
       reply =
         'The connected coach is unavailable right now. Here’s guidance from the built-in coach instead:\n\n' +
-        coachReply(text, state);
+        (/review|weekly|schedule|balance/i.test(text) &&
+        !/pain|injur|hurt|breath|faint|dizz/i.test(text)
+          ? reviewText(state)
+          : coachReply(text, state));
     }
     setState((s) => ({ ...s, messages: [...s.messages, { role: 'assistant', content: reply }] }));
     setBusy(false);
@@ -107,6 +121,7 @@ export default function Trainer() {
           </p>
         </section>
         <aside className="trainer-side">
+          <WeeklyReview onDiscuss={(text) => void send(text)} />
           <section className="card">
             <span className="eyebrow">LET’S TALK ABOUT</span>
             <h3>A stronger next step</h3>
@@ -151,7 +166,7 @@ export default function Trainer() {
             )}
             <p className="footnote">
               {ai
-                ? 'Your profile and recent training are sent to the configured AI provider when you ask a question.'
+                ? 'Your profile, recent training, readiness, weekly review (including weight trends) and recent chat are sent to the configured AI provider only when you ask a question with this option enabled.'
                 : 'The built-in coach uses transparent rules. It is not a live AI service.'}
             </p>
           </section>

@@ -47,6 +47,8 @@ describe('core demo journeys', () => {
       </Provider>,
     );
     await user.click(screen.getByRole('button', { name: /Start workout/i }));
+    await user.selectOptions(screen.getByLabelText('Pain or concerning symptoms?'), 'none');
+    await user.click(screen.getByRole('button', { name: 'Start planned session' }));
     const weight = screen.getByRole('spinbutton', { name: 'Set 1 weight in kg' });
     await user.clear(weight);
     await user.type(weight, '25');
@@ -66,6 +68,8 @@ describe('core demo journeys', () => {
       </Provider>,
     );
     await user.click(screen.getByRole('button', { name: /Start workout/i }));
+    await user.selectOptions(screen.getByLabelText('Pain or concerning symptoms?'), 'none');
+    await user.click(screen.getByRole('button', { name: 'Start planned session' }));
     await user.click(screen.getByRole('button', { name: 'Complete set 1' }));
     first.unmount();
     render(
@@ -198,4 +202,52 @@ it('previews Forma leg suggestions and applies them only when requested', async 
   expect(saved().profile.weeklyPlan).toBeUndefined();
   await user.click(screen.getByRole('button', { name: 'Save weekly plan' }));
   await waitFor(() => expect(saved().profile.weeklyPlan[1].exerciseIds).toHaveLength(5));
+});
+
+it('blocks starting through pain and saves a reduced-effort session only on acceptance', async () => {
+  const user = userEvent.setup();
+  render(
+    <Provider>
+      <Workout />
+    </Provider>,
+  );
+  await user.click(screen.getByRole('button', { name: 'Start workout' }));
+  await user.selectOptions(screen.getByLabelText('Pain or concerning symptoms?'), 'urgent');
+  expect(screen.queryByRole('button', { name: 'Start planned session' })).toBeNull();
+  await user.click(screen.getByRole('button', { name: 'Save check-in' }));
+  expect(saved().active).toBeNull();
+  expect(saved().recovery.at(-1).pain).toBe('urgent');
+  await user.click(screen.getByRole('button', { name: 'Start workout' }));
+  await user.selectOptions(screen.getByLabelText('Pain or concerning symptoms?'), 'none');
+  const sleep = screen.getByLabelText('Sleep last night (hours)');
+  await user.clear(sleep);
+  await user.type(sleep, '4');
+  await user.click(screen.getByRole('button', { name: 'Start reduced-effort session' }));
+  expect(saved().active.plan.lighter).toBe(true);
+  expect(saved().active.plan.exercises.every((e: { rpe: number }) => e.rpe === 6)).toBe(true);
+});
+
+it('keeps the schedule unchanged until a concrete review move is accepted', async () => {
+  const initial = seedState();
+  initial.profile.days = [0, 1];
+  initial.profile.weeklyPlan = {
+    0: { name: 'Leg A', exerciseIds: ['body-squat', 'bridge'] },
+    1: { name: 'Leg B', exerciseIds: ['lunge', 'calf'] },
+  };
+  localStorage.setItem('forma.demo.v1', JSON.stringify(initial));
+  const user = userEvent.setup();
+  render(
+    <Provider>
+      <Workout />
+    </Provider>,
+  );
+  expect(saved().profile.days).toEqual([0, 1]);
+  await user.click(screen.getByRole('button', { name: 'Accept schedule change' }));
+  await waitFor(() => expect(saved().profile.days).not.toContain(1));
+  expect(saved().profile.days).toContain(0);
+  expect(
+    Object.values(saved().profile.weeklyPlan).some(
+      (p: any) => p.name === 'Leg B' && p.exerciseIds.join(',') === 'lunge,calf',
+    ),
+  ).toBe(true);
 });

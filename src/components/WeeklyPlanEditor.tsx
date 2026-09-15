@@ -1,3 +1,4 @@
+import { weeklyReview } from '../lib/review';
 import { useState } from 'react';
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
 import { useApp } from '../lib/context';
@@ -287,6 +288,17 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
         Sets, reps and load suggestions still come from Forma. A saved custom list keeps all your
         exercises; session duration is a preference, not a guarantee.
       </p>
+      <details className="weekly-review">
+        <summary>Review this draft with Forma</summary>
+        <p className="footnote">
+          Uses this draft schedule and your recent logs. Suggestions do not change your plan.
+        </p>
+        <ul className="cue-list">
+          {weeklyReview({ ...state, profile: draft }).findings.map((f) => (
+            <li key={f}>{f}</li>
+          ))}
+        </ul>
+      </details>
       {error && (
         <p className="notice error" role="alert">
           {error}
