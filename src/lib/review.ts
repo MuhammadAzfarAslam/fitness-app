@@ -191,7 +191,11 @@ export function applyReviewMove(state: AppState, from: number, to: number): Prof
   const weeklyPlan = { ...state.profile.weeklyPlan };
   for (const day of state.profile.days) {
     const p = generatePlan(state.profile, state.workouts, { day });
-    weeklyPlan[day] = { name: p.name, exerciseIds: p.exercises.map((e) => e.exerciseId) };
+    weeklyPlan[day] = {
+      ...weeklyPlan[day],
+      name: p.name,
+      exerciseIds: p.exercises.map((e) => e.exerciseId),
+    };
   }
   weeklyPlan[to] = weeklyPlan[from];
   delete weeklyPlan[from];

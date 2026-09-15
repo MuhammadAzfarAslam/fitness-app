@@ -1,3 +1,5 @@
+import { alternativesFor, exerciseRoles } from '../lib/coverage';
+import SessionCoverage from './SessionCoverage';
 import ReadinessCheck from './ReadinessCheck';
 import WeeklyReview from './WeeklyReview';
 import { easierPlan } from '../lib/review';
@@ -19,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useApp, displayWeight, fromDisplayWeight } from '../lib/context';
 import { generatePlan, today, uid, volume } from '../lib/engine';
-import { exercises, exerciseById } from '../data/exercises';
+import { exerciseById } from '../data/exercises';
 import { Modal, Empty, Meter, SectionTitle } from './UI';
 import { ExerciseGuide } from './ExerciseGuide';
 import WeeklyPlanEditor from './WeeklyPlanEditor';
@@ -162,15 +164,13 @@ export default function Workout() {
   const total = active?.logs.reduce((n, e) => n + e.sets.length, 0) ?? 0;
   const source = replace !== null ? exerciseById(plan.exercises[replace].exerciseId) : null;
   const alternatives = source
-    ? exercises.filter(
-        (e) =>
-          e.id !== source.id &&
-          (e.pattern === source.pattern || source.alternatives.includes(e.id)) &&
-          (e.equipment === 'Bodyweight' || state.profile.equipment.includes(e.equipment)) &&
-          !state.profile.excluded.includes(e.id) &&
-          !plan.exercises.some((p) => p.exerciseId === e.id),
+    ? alternativesFor(
+        source.id,
+        state.profile,
+        plan.exercises.map((e) => e.exerciseId),
       )
     : [];
+
   return (
     <>
       <div className="page-heading">
@@ -433,6 +433,13 @@ export default function Workout() {
                 : `Your ${state.profile.duration}-minute preference and ${state.profile.level.toLowerCase()} experience guide the session size.`}
             </div>
             <details className="warmup">
+              <summary>Review session coverage</summary>
+              <SessionCoverage
+                ids={plan.exercises.map((e) => e.exerciseId)}
+                focus={active ? undefined : state.profile.weeklyPlan?.[day]?.focus}
+              />
+            </details>
+            <details className="warmup">
               <summary>Warm-up · 5–8 minutes</summary>
               <p>
                 Begin with easy walking or cycling. Rehearse the day’s movements without load, then
@@ -598,6 +605,13 @@ export default function Workout() {
       )}
       {replace !== null && (
         <Modal title="Find another movement" onClose={() => setReplace(null)}>
+          <p>
+            {source?.name} · {source ? exerciseRoles(source.id).join(' / ') : ''}
+          </p>
+          <SessionCoverage
+            ids={plan.exercises.map((e) => e.exerciseId)}
+            focus={active ? undefined : state.profile.weeklyPlan?.[day]?.focus}
+          />
           <label className="field">
             Why are you replacing this?
             <select value={reason} onChange={(e) => setReason(e.target.value)}>
@@ -618,7 +632,7 @@ export default function Workout() {
               You can skip this exercise and complete only comfortable movements.
             </div>
           ) : alternatives.length ? (
-            alternatives.map((e) => (
+            alternatives.map(({ exercise: e, reason: matchReason }) => (
               <button
                 className="replacement"
                 key={e.id}
@@ -658,7 +672,7 @@ export default function Workout() {
                 <span>
                   <strong>{e.name}</strong>
                   <small>
-                    {e.equipment} · {e.muscle}
+                    {e.equipment} · {e.muscle} · {matchReason}
                   </small>
                 </span>
                 <Plus size={18} />

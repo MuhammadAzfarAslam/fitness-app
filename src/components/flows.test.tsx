@@ -251,3 +251,33 @@ it('keeps the schedule unchanged until a concrete review move is accepted', asyn
     ),
   ).toBe(true);
 });
+
+it('previews an alternative and persists only after saving the weekly plan', async () => {
+  const state = seedState();
+  state.profile.days = [1];
+  state.profile.equipment = ['Dumbbells', 'Barbell', 'Cable'];
+  state.profile.weeklyPlan = {
+    1: { name: 'Chest day', exerciseIds: ['incline', 'bench', 'high-low-fly'] },
+  };
+  localStorage.setItem('forma.demo.v1', JSON.stringify(state));
+  const user = userEvent.setup();
+  render(
+    <Provider>
+      <Workout />
+    </Provider>,
+  );
+  await user.click(screen.getByRole('button', { name: 'Edit weekly plan' }));
+  await user.click(screen.getByText('Alternatives for Incline dumbbell press'));
+  await user.click(screen.getByRole('button', { name: /Incline barbell bench press.*Keeps/i }));
+  expect(saved().profile.weeklyPlan[1].exerciseIds).toContain('incline');
+  await user.click(screen.getByRole('button', { name: 'Use Incline barbell bench press' }));
+  expect(saved().profile.weeklyPlan[1].exerciseIds).toContain('incline');
+  await user.click(screen.getByRole('button', { name: 'Save weekly plan' }));
+  await waitFor(() =>
+    expect(saved().profile.weeklyPlan[1].exerciseIds).toEqual([
+      'incline-barbell',
+      'bench',
+      'high-low-fly',
+    ]),
+  );
+});

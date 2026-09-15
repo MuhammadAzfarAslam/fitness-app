@@ -271,5 +271,23 @@ export const techniques: Record<string, Technique> = {
     'Lower chest toward the floor while keeping head, hips and knees aligned. Push back up without snapping elbows.',
     'Shift hips back gently to unload hands before relaxing. Switch to an elevated support if pressure on knees is uncomfortable.',
   ),
+  'high-low-fly': t(
+    'Wrap thumbs around single handles. Palms turn toward each other as the hands meet; keep wrists straight.',
+    'Keep ribs stacked over hips with a slight forward lean. Maintain a small fixed bend in elbows and shoulders away from ears.',
+    'Sweep hands downward and inward toward the front of the lower chest or upper abdomen. Return slowly without forcing arms behind the torso.',
+    'Return toward the pulleys with control before setting handles down. Never let the weight stack pull your arms back abruptly.',
+  ),
+  'decline-db': t(
+    'Wrap thumbs around the handles with palms toward your feet. Keep each wrist straight over its forearm.',
+    'Secure legs before lying back. Keep upper back supported and elbows at a comfortable angle below shoulder height; do not slide down the bench.',
+    'Lower dumbbells beside the lower chest within a comfortable range. Press up over the chest without banging weights together.',
+    'Arrange a controlled handoff before releasing leg supports and sitting up. If safe setup or exit is uncertain, choose a cable or flat press instead.',
+  ),
+  'incline-barbell': t(
+    'Use an overhand full grip with thumbs wrapped around the bar. Adjust grip width so wrists stay above elbows at the bottom.',
+    'Keep upper back supported and forearms approximately vertical. Avoid flaring elbows straight out or lifting hips from the pad.',
+    'Lower toward the upper chest within a comfortable shoulder range, then press up without bouncing or losing wrist alignment.',
+    'Use correctly set safety arms or a capable spotter. Return the bar above both hooks and verify it is supported before releasing.',
+  ),
 };
 export const pressGripIds = ['incline', 'db-press', 'db-bench', 'skull'];

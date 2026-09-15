@@ -909,3 +909,59 @@ movementVisuals['knee-pushup'] = v(
   ],
   'Side view',
 );
+
+movementVisuals['incline-barbell'] = {
+  ...movementVisuals.incline,
+  cues: [
+    'Low incline, full grip and safety arms.',
+    'Press above the upper chest with wrists stacked.',
+    'Lower with control; keep upper back supported.',
+  ],
+};
+movementVisuals['high-low-fly'] = v(
+  pose(stand, { 3: [120, 94], 4: [82, 65], 5: [240, 94], 6: [278, 65] }),
+  pose(stand, { 3: [157, 127], 4: [173, 153], 5: [203, 127], 6: [187, 153] }),
+  ['Set', 'Sweep down', 'Return'],
+  [
+    'Pulleys above shoulder height; stagger your stance.',
+    'Sweep down and inward with a fixed elbow bend.',
+    'Open slowly without forcing arms behind the torso.',
+  ],
+  'Front view',
+);
+movementVisuals['decline-db'] = v(
+  pose(pressStart, {
+    0: [83, 204],
+    1: [109, 205],
+    2: [204, 181],
+    3: [145, 208],
+    4: [149, 162],
+    5: [134, 213],
+    6: [138, 167],
+    7: [247, 167],
+    8: [244, 224],
+    9: [235, 172],
+    10: [232, 229],
+  }),
+  pose(pressEnd, {
+    0: [83, 204],
+    1: [109, 205],
+    2: [204, 181],
+    3: [127, 158],
+    4: [138, 113],
+    5: [116, 163],
+    6: [127, 118],
+    7: [247, 167],
+    8: [244, 224],
+    9: [235, 172],
+    10: [232, 229],
+  }),
+  ['Set', 'Press', 'Lower'],
+  [
+    'Secure legs on a purpose-built decline bench.',
+    'Press above lower chest with wrists stacked.',
+    'Lower slowly; arrange help for a controlled exit.',
+  ],
+  'Side view',
+  'bench',
+);

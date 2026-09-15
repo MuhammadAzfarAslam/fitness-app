@@ -3819,3 +3819,17 @@ details p {
   cursor: pointer;
   font-size: 13px;
 }
+
+.session-coverage { padding: 14px; margin: 14px 0; border: 1px solid var(--line); border-radius: 12px; }
+.session-coverage h4 { margin: 0 0 10px; }
+.session-coverage ul { list-style: none; padding: 0; margin: 0; }
+.session-coverage li { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; padding: 6px 0; }
+.session-coverage li strong { white-space: nowrap; }
+.exercise-alternatives { width: 100%; min-width: 0; padding: 10px 0; }
+.exercise-alternatives summary { cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text); }
+.exercise-alternatives[open] summary { margin-bottom: 12px; }
+.exercise-alternatives .replacement { width: 100%; text-align: left; white-space: normal; }
+.exercise-alternatives .replacement[aria-pressed="true"] { outline: 2px solid var(--accent, #9fcf52); }
+.weekly-exercises > li { flex-wrap: wrap; }
+.weekly-exercises > li > div:first-child { flex: 1; min-width: 160px; }
+.weekly-exercises .session-coverage li { flex-wrap: nowrap; padding: 6px 0; }

@@ -1,3 +1,6 @@
+import ExerciseAlternatives from './ExerciseAlternatives';
+import SessionCoverage from './SessionCoverage';
+import { exerciseRoles } from '../lib/coverage';
 import { weeklyReview } from '../lib/review';
 import { useState } from 'react';
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
@@ -32,9 +35,16 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
     (e) =>
       !ids.includes(e.id) && `${e.name} ${e.muscle}`.toLowerCase().includes(search.toLowerCase()),
   );
-  function update(exerciseIds: string[], name = custom?.name ?? `${names[day]} · My workout`) {
+  function update(
+    exerciseIds: string[],
+    name = custom?.name ?? `${names[day]} · My workout`,
+    dayFocus = custom?.focus,
+  ) {
     setError('');
-    setDraft((p) => ({ ...p, weeklyPlan: { ...p.weeklyPlan, [day]: { name, exerciseIds } } }));
+    setDraft((p) => ({
+      ...p,
+      weeklyPlan: { ...p.weeklyPlan, [day]: { name, exerciseIds, focus: dayFocus } },
+    }));
   }
   function move(index: number, offset: number) {
     const next = [...ids];
@@ -141,9 +151,25 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
                 <p>{proposal.explanation}</p>
                 <ol>
                   {proposal.exerciseIds.map((id) => (
-                    <li key={id}>{exerciseById(id).name}</li>
+                    <li key={id}>
+                      {exerciseById(id).name} <small> · {exerciseRoles(id).join(' / ')}</small>
+                      <ExerciseAlternatives
+                        proposal
+                        focus={focus}
+                        id={id}
+                        ids={proposal.exerciseIds}
+                        profile={draft}
+                        onReplace={(next) =>
+                          setProposal({
+                            ...proposal,
+                            exerciseIds: proposal.exerciseIds.map((x) => (x === id ? next : x)),
+                          })
+                        }
+                      />
+                    </li>
                   ))}
                 </ol>
+                <SessionCoverage ids={proposal.exerciseIds} focus={focus} />
                 {proposal.warning && <p className="notice">{proposal.warning}</p>}
                 <p className="footnote">
                   Sets and reps follow your goal; load suggestions use workout history. Height and
@@ -155,7 +181,7 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
                   type="button"
                   disabled={!proposal.exerciseIds.length}
                   onClick={() => {
-                    update(proposal.exerciseIds, `${focus} day`);
+                    update(proposal.exerciseIds, `${focus} day`, focus);
                     setProposal(null);
                   }}
                 >
@@ -181,6 +207,7 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
               ? 'Your chosen exercises'
               : 'Forma’s suggested exercises — edit any row to customize this day.'}
           </p>
+          <SessionCoverage ids={ids} focus={custom?.focus} />
           <ol className="weekly-exercises">
             {ids.map((id, i) => {
               const e = exerciseById(id);
@@ -191,7 +218,7 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
                       {i + 1}. {e.name}
                     </strong>
                     <small>
-                      {e.muscle} · {e.equipment}
+                      {e.muscle} · {e.equipment} · {exerciseRoles(id).join(' / ')}
                       {!available.some((a) => a.id === id)
                         ? ' · Unavailable with current profile'
                         : ''}
@@ -225,6 +252,13 @@ export default function WeeklyPlanEditor({ onClose }: { onClose: () => void }) {
                       <Trash2 size={16} />
                     </button>
                   </div>
+                  <ExerciseAlternatives
+                    id={id}
+                    focus={custom?.focus}
+                    ids={ids}
+                    profile={draft}
+                    onReplace={(next) => update(ids.map((x) => (x === id ? next : x)))}
+                  />
                 </li>
               );
             })}

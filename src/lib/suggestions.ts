@@ -1,3 +1,4 @@
+import { compatibleExercise, roleGroups } from './coverage';
 import { exercises } from '../data/exercises';
 import type { Profile } from './types';
 export const trainingFocuses = [
@@ -15,25 +16,13 @@ export type TrainingFocus = (typeof trainingFocuses)[number];
 export function suggestExercises(profile: Profile, focus: TrainingFocus) {
   const candidates = exercises.filter(
     (e) =>
-      (focus === 'Full body' || focus === 'Upper body'
-        ? focus === 'Full body' || ['Chest', 'Back', 'Shoulders', 'Arms'].includes(e.muscle)
-        : e.muscle === (focus === 'Cardio' ? 'Cardio' : focus)) &&
-      !profile.excluded.includes(e.id) &&
-      (e.equipment === 'Bodyweight' || profile.equipment.includes(e.equipment)) &&
-      (profile.level !== 'Beginner' || e.difficulty !== 'Advanced') &&
-      (!profile.preferences.toLowerCase().includes('no barbell') || e.equipment !== 'Barbell'),
-  );
-  const slots =
-    focus === 'Chest'
-      ? ['flat-press', 'incline-press', 'isolation', 'bodyweight']
-      : focus === 'Legs'
-        ? ['Squat', 'Hinge', 'single-leg', 'Calf', 'isolation']
+      compatibleExercise(e, profile) &&
+      (focus === 'Full body'
+        ? e.muscle !== 'Cardio'
         : focus === 'Upper body'
-          ? ['Push', 'Pull', 'Push', 'Pull', 'isolation']
-          : focus === 'Full body'
-            ? ['Squat', 'Push', 'Pull', 'Hinge', 'Core']
-            : [];
-  const chosen: typeof exercises = [];
+          ? ['Chest', 'Back', 'Shoulders', 'Arms'].includes(e.muscle)
+          : e.muscle === focus),
+  );
   const ranked = [...candidates].sort((a, b) => {
     const score = (e: typeof a) =>
       (profile.preferences.toLowerCase().includes(e.name.toLowerCase()) ? -10 : 0) +
@@ -42,40 +31,57 @@ export function suggestExercises(profile: Profile, focus: TrainingFocus) {
     return score(a) - score(b);
   });
   const count = Math.max(1, Math.min(12, Math.floor(profile.exerciseCount) || 5));
-  for (const slot of slots) {
+  const chosen: typeof exercises = [];
+  // Larger mixed sessions prioritize movement families, then show regional gaps explicitly.
+  const groups =
+    focus === 'Full body'
+      ? [
+          roleGroups.Legs['Quads / knee dominant'],
+          roleGroups.Chest['General / middle chest'],
+          roleGroups.Back['Horizontal pull / upper back'],
+          roleGroups.Legs.Hamstrings,
+          roleGroups.Core['Trunk stability'],
+          roleGroups.Back['Vertical pull / lats'],
+          roleGroups.Shoulders['Side delts'],
+        ]
+      : focus === 'Upper body'
+        ? [
+            roleGroups.Chest['General / middle chest'],
+            roleGroups.Back['Horizontal pull / upper back'],
+            roleGroups.Back['Vertical pull / lats'],
+            roleGroups.Shoulders['Side delts'],
+            roleGroups.Chest['Upper chest emphasis'],
+            roleGroups.Arms['Biceps / elbow flexion'],
+            roleGroups.Arms['Triceps / elbow extension'],
+          ]
+        : Object.values(roleGroups[focus] ?? {});
+  for (const ids of groups) {
     if (chosen.length >= count) break;
-    const e = ranked.find(
-      (e) =>
-        !chosen.includes(e) &&
-        (slot === 'flat-press'
-          ? ['bench', 'db-bench', 'machine-press', 'db-press'].includes(e.id)
-          : slot === 'incline-press'
-            ? e.id === 'incline'
-            : slot === 'bodyweight'
-              ? e.equipment === 'Bodyweight'
-              : slot === 'single-leg'
-                ? e.id === 'lunge'
-                : slot === 'isolation'
-                  ? !e.compound
-                  : e.pattern === slot),
-    );
+    if (chosen.some((e) => ids.includes(e.id))) continue;
+    const e = ranked.find((e) => ids.includes(e.id) && !chosen.includes(e));
     if (e) chosen.push(e);
   }
   for (const e of ranked) {
     if (chosen.length >= count) break;
     if (!chosen.includes(e)) chosen.push(e);
   }
+  const warnings = [];
+  if (chosen.length < count)
+    warnings.push(
+      `Only ${chosen.length} matching exercises are available with your current profile. Forma will not add duplicates or unrelated exercises to reach ${count}.`,
+    );
+  if (focus === 'Chest' && count >= 5)
+    warnings.push(
+      'Five chest exercises overlap substantially. Consider fewer movements or rotating alternatives; more exercises do not automatically mean better results.',
+    );
+  if (count * 6 + 5 > profile.duration)
+    warnings.push(
+      'This selection may exceed your preferred session time. Review sets and rest periods.',
+    );
   return {
     exerciseIds: chosen.map((e) => e.id),
     requested: count,
-    explanation: `${focus} focus · ${profile.goal} · ${profile.level} · ${count} requested exercises. Choices respect your equipment, exclusions and preferences.${focus === 'Chest' ? ' Chest choices prioritize a main press, an incline press, a fly and a bodyweight option when available. Extra selections are alternatives with overlapping work, not additional chest regions.' : ''}`,
-    warning:
-      chosen.length < count
-        ? `Only ${chosen.length} matching exercises are available with your current profile. Forma will not add duplicates or unrelated exercises to reach ${count}.`
-        : focus === 'Chest' && count >= 5
-          ? 'Five chest exercises overlap substantially. Consider keeping 2–3 complementary movements and rotating the others. More exercises do not automatically mean better results; review weekly sets and recovery.'
-          : count * 6 + 5 > profile.duration
-            ? 'This many exercises may take longer than your preferred session time. Allow more time or remove an exercise.'
-            : '',
+    explanation: `${focus} focus · ${profile.goal} · ${profile.level} · ${count} requested exercises. Forma prioritizes complementary roles before adding additional choices, respecting your equipment, exclusions and preferences. Coverage shows emphasis, not isolated muscles or a guarantee of results.`,
+    warning: warnings.join(' '),
   };
 }

@@ -148,10 +148,13 @@ export default function MovementDemo({ exercise }: { exercise: Exercise }) {
               <path d="M145 61H215V180H145ZM146 184H216M151 184V251M210 184V251" />
             )}
             {exercise.id === 'db-fly' && <path d="M151 32H209V258H151Z" />}
+            {exercise.id === 'high-low-fly' && <path d="M56 252V45H82M304 252V45H278" />}
             {visual.equipment === 'bar' && <path d="M95 258V42H265V258M113 42H247" />}
             {visual.equipment === 'bench' &&
-              (exercise.id === 'incline' ? (
+              (['incline', 'incline-barbell'].includes(exercise.id) ? (
                 <path d="M112 166L207 207H258M139 185V253M246 207V253" />
+              ) : exercise.id === 'decline-db' ? (
+                <path d="M71 225L213 192H253M91 221V253M220 192V253M230 183H257M230 217H254" />
               ) : exercise.id === 'db-row' ? (
                 <path d="M252 197H311M263 197V253M301 197V253" />
               ) : (
@@ -171,6 +174,12 @@ export default function MovementDemo({ exercise }: { exercise: Exercise }) {
             )}
             {visual.equipment === 'steps' && <path d="M130 257H204V219H245V182H290V145H325" />}
           </g>
+          {exercise.id === 'high-low-fly' && (
+            <g stroke="#879782" strokeWidth="2">
+              <line x1="82" y1="45" x2={display[4][0]} y2={display[4][1]} />
+              <line x1="278" y1="45" x2={display[6][0]} y2={display[6][1]} />
+            </g>
+          )}
           {visual.equipment === 'cable' && (
             <line
               x1={exercise.id === 'triceps' || exercise.id === 'crunch' ? 285 : 320}
