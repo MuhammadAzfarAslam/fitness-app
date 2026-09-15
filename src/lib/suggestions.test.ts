@@ -25,3 +25,23 @@ it('reports insufficient compatible choices instead of ignoring exclusions or eq
   expect(s.warning).toContain('Only');
   expect(s.exerciseIds.every((id) => exerciseById(id).equipment === 'Bodyweight')).toBe(true);
 });
+
+it('balances chest suggestions and explains overlap at five exercises', () => {
+  const p = {
+    ...seedState().profile,
+    equipment: ['Barbell', 'Dumbbells', 'Cable', 'Machine'],
+    exerciseCount: 5,
+  };
+  const result = suggestExercises(p, 'Chest');
+  expect(result.exerciseIds).toHaveLength(5);
+  expect(new Set(result.exerciseIds).size).toBe(5);
+  expect(result.exerciseIds).toContain('incline');
+  expect(result.exerciseIds.some((id) => !exerciseById(id).compound)).toBe(true);
+  expect(result.warning).toContain('overlap');
+});
+it('offers scalable chest options without inventing equipment', () => {
+  const p = { ...seedState().profile, equipment: [], exerciseCount: 5, excluded: ['pushup'] };
+  const result = suggestExercises(p, 'Chest');
+  expect(result.exerciseIds.sort()).toEqual(['incline-pushup', 'knee-pushup']);
+  expect(result.warning).toContain('Only 2');
+});

@@ -791,3 +791,121 @@ export const movementVisuals: Record<string, MovementVisual> = {
     'steps',
   ),
 };
+
+movementVisuals['db-bench'] = v(
+  pressStart,
+  pressEnd,
+  ['Set', 'Press', 'Lower'],
+  [
+    'Feet planted on a flat bench.',
+    'Stack wrists over elbows.',
+    'Lower slowly within comfortable range.',
+  ],
+  'Side view',
+  'bench',
+);
+movementVisuals['machine-press'] = v(
+  pose(seated, { 3: [175, 120], 4: [220, 116], 5: [169, 128], 6: [213, 124] }),
+  pose(seated, { 3: [225, 105], 4: [267, 104], 5: [219, 113], 6: [259, 112] }),
+  ['Set', 'Press', 'Return'],
+  [
+    'Adjust handles to chest height.',
+    'Press forward with back supported.',
+    'Return slowly without rolling shoulders forward.',
+  ],
+  'Side view',
+  'seat',
+);
+// Front views make the opening/closing arc visible. Text supplies the depth limit.
+movementVisuals['pec-deck'] = v(
+  pose(stand, { 3: [122, 106], 4: [106, 78], 5: [238, 106], 6: [254, 78] }),
+  pose(stand, { 3: [164, 111], 4: [172, 89], 5: [196, 111], 6: [188, 89] }),
+  ['Open', 'Close', 'Return'],
+  [
+    'Keep a small fixed elbow bend.',
+    'Bring handles together in front of the chest.',
+    'Stop before shoulders are pulled behind the torso.',
+  ],
+  'Front view',
+);
+movementVisuals['db-fly'] = v(
+  pose(stand, { 3: [116, 104], 4: [77, 89], 5: [244, 104], 6: [283, 89] }),
+  pose(stand, { 3: [163, 97], 4: [173, 61], 5: [197, 97], 6: [187, 61] }),
+  ['Open', 'Close', 'Lower'],
+  [
+    'Lie flat; this view looks down from above.',
+    'Bring weights over chest with a fixed elbow bend.',
+    'Stop at torso level or earlier for comfort.',
+  ],
+  'Top-down view · lying on flat bench',
+);
+movementVisuals['incline-pushup'] = v(
+  [
+    [102, 83],
+    [124, 105],
+    [210, 172],
+    [116, 140],
+    [109, 175],
+    [134, 145],
+    [127, 175],
+    [254, 209],
+    [295, 247],
+    [242, 211],
+    [283, 247],
+  ],
+  [
+    [80, 135],
+    [103, 152],
+    [201, 193],
+    [82, 161],
+    [109, 175],
+    [101, 170],
+    [127, 175],
+    [249, 218],
+    [295, 247],
+    [238, 219],
+    [283, 247],
+  ],
+  ['Set', 'Lower', 'Press'],
+  [
+    'Hands on a fixed stable support.',
+    'Lower chest toward the support as one unit.',
+    'Push away without sagging at the hips.',
+  ],
+  'Side view',
+);
+movementVisuals['knee-pushup'] = v(
+  [
+    [106, 139],
+    [130, 159],
+    [205, 207],
+    [121, 203],
+    [119, 247],
+    [137, 205],
+    [135, 247],
+    [256, 247],
+    [295, 220],
+    [245, 247],
+    [283, 218],
+  ],
+  [
+    [99, 203],
+    [126, 214],
+    [207, 235],
+    [99, 233],
+    [119, 247],
+    [115, 238],
+    [135, 247],
+    [256, 247],
+    [295, 220],
+    [245, 247],
+    [283, 218],
+  ],
+  ['Set', 'Lower', 'Press'],
+  [
+    'Keep head, hips and knees aligned.',
+    'Lower chest without folding at the hips.',
+    'Press through the whole hand.',
+  ],
+  'Side view',
+);

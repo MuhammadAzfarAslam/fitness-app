@@ -235,5 +235,41 @@ export const techniques: Record<string, Technique> = {
     'Alternate controlled steps at a sustainable pace. Reduce speed before balance deteriorates.',
     'Use the stop control and wait for the machine to stop before stepping off.',
   ),
+  'db-bench': t(
+    'Palms face toward your feet; thumbs wrap fully around the handles. Handles run across the body when viewed from above.',
+    'Keep wrists over elbows and upper arms roughly 30–60° from your ribs. Keep upper back supported on the flat bench.',
+    'Lower beside the chest within comfortable shoulder motion, then press above the chest without clashing weights.',
+    'Bring weights toward thighs with control and sit up. Use a load you can position and put down without throwing it.',
+  ),
+  'machine-press': t(
+    'Wrap thumbs around the handles. Use the machine’s prescribed grip; palms may face down or inward depending on its design.',
+    'Keep wrists straight and elbows below shoulder height. Adjust the seat and starting range before adding load.',
+    'Press along the machine’s path without snapping elbows. Return slowly until a comfortable chest stretch, without shoulders rolling forward.',
+    'Return handles slowly until the stack rests. Release only after the load is supported; follow the machine’s setup label.',
+  ),
+  'pec-deck': t(
+    'For the handle-style version, wrap thumbs around vertical handles with palms facing inward. Pad-style machines need a different setup; follow their label.',
+    'Keep back supported and a small fixed bend in elbows. Do not force arms behind the torso or shrug toward ears.',
+    'Bring handles together in a wide arc in front of the chest. Open slowly only while shoulders remain comfortable.',
+    'Return slowly until the stack rests before releasing handles. Reduce the starting range if entering or exiting is difficult.',
+  ),
+  'db-fly': t(
+    'Palms face each other throughout the rep. Wrap thumbs around the handles and keep wrists straight; do not turn it into a press.',
+    'Maintain a small bend in each elbow throughout the arc. Keep upper back supported; use substantially less load than for pressing.',
+    'Open arms in a wide arc, stopping around torso level or earlier for comfort. Bring weights back over the chest without changing elbow bend.',
+    'Bend elbows to bring weights close before sitting up with control. Never drop weights from the stretched position.',
+  ),
+  'incline-pushup': t(
+    'Place palms flat on the support just outside shoulder width. Spread fingers and press through the whole hand.',
+    'Keep head, hips and heels in one line. Keep elbows roughly 30–60° from the ribs; do not let the lower back sag.',
+    'Lower the chest toward the edge as one unit, then push away. Choose a support height that allows controlled full repetitions.',
+    'Step toward the support before standing upright. Progress by lowering the support height only when repetitions stay controlled.',
+  ),
+  'knee-pushup': t(
+    'Place palms flat just outside shoulder width with fingers spread. Keep pressure through the entire hand.',
+    'Keep the trunk braced and hips extended, not folded back. Aim elbows roughly 30–60° from the ribs.',
+    'Lower chest toward the floor while keeping head, hips and knees aligned. Push back up without snapping elbows.',
+    'Shift hips back gently to unload hands before relaxing. Switch to an elevated support if pressure on knees is uncomfortable.',
+  ),
 };
-export const pressGripIds = ['incline', 'db-press', 'skull'];
+export const pressGripIds = ['incline', 'db-press', 'db-bench', 'skull'];

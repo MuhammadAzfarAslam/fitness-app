@@ -232,8 +232,8 @@ export default function ExerciseTechnique({ exercise }: { exercise: Exercise }) 
   const detail = techniques[exercise.id];
   const uid = useId();
   const isPress = pressGripIds.includes(exercise.id);
-  const chestPress = ['incline', 'db-press', 'bench', 'pushup'].includes(exercise.id);
-  const variants = ['incline', 'ohp'].includes(exercise.id);
+  const chestPress = ['incline', 'db-press', 'db-bench', 'bench', 'pushup'].includes(exercise.id);
+  const variants = ['incline', 'db-bench', 'ohp'].includes(exercise.id);
   const views = ['Grip & setup', 'Angles', 'Movement', 'Self-check'];
   return (
     <section className="technique-studio" aria-label={`${exercise.name} technique studio`}>

@@ -24,13 +24,15 @@ export function suggestExercises(profile: Profile, focus: TrainingFocus) {
       (!profile.preferences.toLowerCase().includes('no barbell') || e.equipment !== 'Barbell'),
   );
   const slots =
-    focus === 'Legs'
-      ? ['Squat', 'Hinge', 'single-leg', 'Calf', 'isolation']
-      : focus === 'Upper body'
-        ? ['Push', 'Pull', 'Push', 'Pull', 'isolation']
-        : focus === 'Full body'
-          ? ['Squat', 'Push', 'Pull', 'Hinge', 'Core']
-          : [];
+    focus === 'Chest'
+      ? ['flat-press', 'incline-press', 'isolation', 'bodyweight']
+      : focus === 'Legs'
+        ? ['Squat', 'Hinge', 'single-leg', 'Calf', 'isolation']
+        : focus === 'Upper body'
+          ? ['Push', 'Pull', 'Push', 'Pull', 'isolation']
+          : focus === 'Full body'
+            ? ['Squat', 'Push', 'Pull', 'Hinge', 'Core']
+            : [];
   const chosen: typeof exercises = [];
   const ranked = [...candidates].sort((a, b) => {
     const score = (e: typeof a) =>
@@ -45,11 +47,17 @@ export function suggestExercises(profile: Profile, focus: TrainingFocus) {
     const e = ranked.find(
       (e) =>
         !chosen.includes(e) &&
-        (slot === 'single-leg'
-          ? e.id === 'lunge'
-          : slot === 'isolation'
-            ? !e.compound
-            : e.pattern === slot),
+        (slot === 'flat-press'
+          ? ['bench', 'db-bench', 'machine-press', 'db-press'].includes(e.id)
+          : slot === 'incline-press'
+            ? e.id === 'incline'
+            : slot === 'bodyweight'
+              ? e.equipment === 'Bodyweight'
+              : slot === 'single-leg'
+                ? e.id === 'lunge'
+                : slot === 'isolation'
+                  ? !e.compound
+                  : e.pattern === slot),
     );
     if (e) chosen.push(e);
   }
@@ -60,12 +68,14 @@ export function suggestExercises(profile: Profile, focus: TrainingFocus) {
   return {
     exerciseIds: chosen.map((e) => e.id),
     requested: count,
-    explanation: `${focus} focus · ${profile.goal} · ${profile.level} · ${count} requested exercises. Choices respect your equipment, exclusions and preferences.`,
+    explanation: `${focus} focus · ${profile.goal} · ${profile.level} · ${count} requested exercises. Choices respect your equipment, exclusions and preferences.${focus === 'Chest' ? ' Chest choices prioritize a main press, an incline press, a fly and a bodyweight option when available. Extra selections are alternatives with overlapping work, not additional chest regions.' : ''}`,
     warning:
       chosen.length < count
         ? `Only ${chosen.length} matching exercises are available with your current profile. Forma will not add duplicates or unrelated exercises to reach ${count}.`
-        : count * 6 + 5 > profile.duration
-          ? 'This many exercises may take longer than your preferred session time. Allow more time or remove an exercise.'
-          : '',
+        : focus === 'Chest' && count >= 5
+          ? 'Five chest exercises overlap substantially. Consider keeping 2–3 complementary movements and rotating the others. More exercises do not automatically mean better results; review weekly sets and recovery.'
+          : count * 6 + 5 > profile.duration
+            ? 'This many exercises may take longer than your preferred session time. Allow more time or remove an exercise.'
+            : '',
   };
 }

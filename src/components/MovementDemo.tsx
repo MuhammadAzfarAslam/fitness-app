@@ -143,6 +143,11 @@ export default function MovementDemo({ exercise }: { exercise: Exercise }) {
             strokeLinecap="round"
             strokeLinejoin="round"
           >
+            {exercise.id === 'incline-pushup' && <path d="M85 180H146V254H85Z" />}
+            {exercise.id === 'pec-deck' && (
+              <path d="M145 61H215V180H145ZM146 184H216M151 184V251M210 184V251" />
+            )}
+            {exercise.id === 'db-fly' && <path d="M151 32H209V258H151Z" />}
             {visual.equipment === 'bar' && <path d="M95 258V42H265V258M113 42H247" />}
             {visual.equipment === 'bench' &&
               (exercise.id === 'incline' ? (

@@ -27,7 +27,7 @@ npm run preview  # Preview dist, including the service worker
 - Four-step editable profile with goals, schedule, equipment, experience, exclusions, limitations, and preferences.
 - Rules-based workout generation; upper/lower or full-body split; strength/endurance rep ranges; shorter/easier sessions; fatigue and sleep check-ins.
 - Focused workout mode, editable sets/reps/load/RPE, exercise notes, session notes, rest timer, equipment-aware substitutions, resumable active session, history.
-- 38 exercise guides with setup, execution, breathing/cues, common mistakes, safety and alternatives.
+- 44 exercise guides with setup, execution, breathing/cues, common mistakes, safety and alternatives.
 - Weight and body measurements with charts, estimated 1RM/weight records, workout volume, weekly consistency, private progress photos.
 - Meal CRUD, quantities and portions, daily calories/macros, conservative estimated nutrition targets, water logging.
 - Contextual built-in coach. Optional AI chat and food-photo estimation with manual review before saving.
@@ -149,7 +149,7 @@ Every exercise guide includes an original SVG movement demonstration with three 
 
 ### Detailed technique studio
 
-Exercise guides open with grip and setup instructions, followed by selectable Angles, Movement, and Self-check views. `src/data/technique.ts` contains exercise-specific contact points, alignment, range, and safe-exit guidance for all 38 exercises. Incline press includes an original top-down grip comparison, low-incline bench diagram, upper-arm angle reference, and wrist alignment comparison. The ACE link supports grip/wrist technique; its bench-angle variation differs from the low-incline version used here. Diagrams and checklists teach technique but do not observe or certify a user’s form.
+Exercise guides open with grip and setup instructions, followed by selectable Angles, Movement, and Self-check views. `src/data/technique.ts` contains exercise-specific contact points, alignment, range, and safe-exit guidance for all 44 exercises. Incline press includes an original top-down grip comparison, low-incline bench diagram, upper-arm angle reference, and wrist alignment comparison. The ACE link supports grip/wrist technique; its bench-angle variation differs from the low-incline version used here. Diagrams and checklists teach technique but do not observe or certify a user’s form.
 
 ### Authentication URLs and missing database tables
 
@@ -172,3 +172,5 @@ Workout and Trainer show a current weekly review: primary-muscle set estimates, 
 When a compatible rest day exists, the review proposes a concrete day move. Accepting it preserves exercise lists on all training days and leaves any active workout intact. No change is applied by chat. Discuss with Forma opens the review in Trainer; built-in answers remain rules-based. Opt-in connected AI receives the computed review and up to six recent chat messages inside the profile context accepted by the existing coach function, as well as the previously supplied training/readiness context. A configured Supabase coach Edge Function and server-side API key are still required for live AI. No database migration is needed.
 
 Principles: [ACSM resistance training guidance](https://acsm.org/resistance-training-guidelines-update-2026/), [CDC activity guidance](https://www.cdc.gov/physical-activity-basics/guidelines/adults.html). These sources inform general principles; app thresholds and scheduling algorithms have not been professionally or clinically validated. The app does not assess injuries, prescribe rehabilitation, or guarantee results.
+
+Chest catalog: 11 options with equipment-filtered suggestions, including flat dumbbell press, machine chest press, pec deck, dumbbell fly, incline push-up and kneeling push-up. Suggestions prioritize complementary movement categories and flag overlap when five or more chest exercises are requested. These rules do not assess a user's physical technique. Setup references include [NASM machine chest press](https://www.nasm.org/resource-center/exercise-library/chest-press-machine) and [NASM incline push-up](https://www.nasm.org/resource-center/exercise-library/incline-push-up). Machine designs vary; follow the equipment label.
